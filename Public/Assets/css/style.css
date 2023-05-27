@@ -1,0 +1,33 @@
+body{
+    font-family: roboto,lato !important;
+    font-size: large;
+}
+
+.logo{
+    height: 43px;
+}
+
+.navbar-brand{
+    font-size: 27px;
+    padding-left: 10px;
+    font-family: "Lato";
+}
+
+
+.nav-item a {
+    color: gray !important;
+    font-size: 16px;
+    padding: 0px 10px;
+    font-weight: 600;
+
+}
+
+.display-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+li.nav-item{
+    padding: 0 10px;
+}
