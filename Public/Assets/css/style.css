@@ -1,6 +1,11 @@
 body{
-    font-family: roboto,lato !important;
+    /* font-family: roboto,lato !important; */
     font-size: large;
+}
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .logo{
@@ -10,7 +15,7 @@ body{
 .navbar-brand{
     font-size: 27px;
     padding-left: 10px;
-    font-family: "Lato";
+    font-family: "lato";
 }
 
 
@@ -35,5 +40,20 @@ li.nav-item{
 .signin-image{
     height: 390px;
     border: 25px solid white;
-    border-radius:  15px;
+    border-radius:  5px;
+    box-shadow: 1px 1px 5px grey;
 }
+
+
+.cursor-pointer{
+    cursor: pointer;
+
+}
+
+.jumbotron {
+    background-color: white ;
+}
+textarea:focus, input:focus{
+    outline: none !important;
+}
+

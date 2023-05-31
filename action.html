@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create or Join Meeting</title>
     <link rel="stylesheet" href="/Public/Assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icons?family=Material+icons">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <link rel="stylesheet" href="Public/Assets/css/style.css">
 </head>
-<body>
+<body style="padding-top: 3.5rem;">
     <nav class="navbar navbar-expand-md fixed-top">
         <img src="Public/Assets/images/google-meet-icon.png" class = "logo" alt="google-meet-logo">
         <a href="#" class="navbar-brand text-dark">Google Meet</a>
@@ -45,6 +46,19 @@
                 <p  style="font-size: 20px;">
                     We are redesigning the Google Meet service for secure business meetings making it free for everyone to use.
                 </p>
+                <ul class="display-center justify-content-start">
+                    <li style="padding: 0;">
+                        <button class="btn btn-lg text-light font-weight-bold display-center" style="background-color:#01796b ;">
+                            <span class="material-icons mr-2">video_call</span>
+                        New Meeting</button>
+                    </li>
+                    <li class="pl-2">
+                        <button class="btn btn-lg btn-outline-secondary text-dark font-weight-bold display-center" style="background-color:#ffffff ;">
+                            <span class="material-icons mr-2">keyboard</span>
+                        <input type="text" placeholder="Enter a code" style="border: none;"></button>
+                    </li>
+                    <li class="text-dark pl-2 font-weight-bold cursor-pointer">Join</li>
+                </ul>
 
             </div>
             <div class="containter w-50">
@@ -54,6 +68,11 @@
             </div>
         </div>
     </main>
+
+    <footer class="container">
+        <h6>Learn more about <span class="learn-more text-info">google meet</span>.</h6>
+
+    </footer>
     
 </body>
 </html>
