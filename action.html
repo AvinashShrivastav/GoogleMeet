@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+This HTML file represents the action page of a web application for Google Meet. It provides a user interface for creating or joining a meeting.
+
+The file includes the following sections:
+- Document type declaration and HTML structure
+- Meta tags for character encoding, compatibility, and viewport
+- Title of the page
+- External CSS stylesheets for Bootstrap and custom styles
+- Navigation bar with a logo, brand name, and menu items
+- Main content section with a jumbotron and a description of the service
+- Buttons for creating a new meeting and joining a meeting
+- Footer section with a link to learn more about Google Meet
+
+Note: The file path is provided for reference.
+-->
+
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create or Join Meeting</title>
     <link rel="stylesheet" href="/Public/Assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="Public/Assets/css/style.css">
 </head>
+
 <body style="padding-top: 3.5rem;">
     <nav class="navbar navbar-expand-md fixed-top">
-        <img src="Public/Assets/images/google-meet-icon.png" class = "logo" alt="google-meet-logo">
+        <img src="Public/Assets/images/google-meet-icon.png" class="logo" alt="google-meet-logo">
         <a href="#" class="navbar-brand text-dark">Google Meet</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
@@ -26,12 +43,13 @@
                     <a href="#" class="nav-link">Plan and Prices</a>
                 </li>
             </ul>
-            <ul class="navbar-nav mr-0"> 
-                <li class="nav-item display-center" >
+            <ul class="navbar-nav mr-0">
+                <li class="nav-item display-center">
                     <a href="#" class="nav-link sign-in">Sign in</a>
                 </li>
                 <li class="nav-item">
-                    <button class="btn btn-outline-secondary btn-lg text-info font-weight-bold">Join the meeting</button>
+                    <button class="btn btn-outline-secondary btn-lg text-info font-weight-bold">Join the
+                        meeting</button>
                 </li>
                 <li class="nav-item">
                     <button class="btn btn-info btn-lg text-light font-weight-bold">Start a meeting</button>
@@ -42,37 +60,74 @@
     <main>
         <div class="jumbotron h-100 d-flex">
             <div class="containter w-50">
-                <h1 style="font-size: 3rem;">Premium video meeting. Now it is available for free to everyone. </h1>
-                <p  style="font-size: 20px;">
-                    We are redesigning the Google Meet service for secure business meetings making it free for everyone to use.
+                <h1 style="font-size: 3rem;">Premium video meeting. Now it is available for free to everyone.</h1>
+                <p style="font-size: 20px;">
+                    We are redesigning the Google Meet service for secure business meetings making it free for everyone
+                    to use.
                 </p>
                 <ul class="display-center justify-content-start">
                     <li style="padding: 0;">
-                        <button class="btn btn-lg text-light font-weight-bold display-center" style="background-color:#01796b ;">
+                        <button class="btn btn-lg text-light font-weight-bold display-center"
+                            style="background-color:#01796b ;">
                             <span class="material-icons mr-2">video_call</span>
-                        New Meeting</button>
+                            New Meeting
+                        </button>
                     </li>
                     <li class="pl-2">
-                        <button class="btn btn-lg btn-outline-secondary text-dark font-weight-bold display-center" style="background-color:#ffffff ;">
+                        <button class="btn btn-lg btn-outline-secondary text-dark font-weight-bold display-center"
+                            style="background-color:#ffffff ;">
                             <span class="material-icons mr-2">keyboard</span>
-                        <input type="text" placeholder="Enter a code" style="border: none;"></button>
+                            <input type="text" placeholder="Enter a code" style="border: none;">
+                        </button>
                     </li>
                     <li class="text-dark pl-2 font-weight-bold cursor-pointer">Join</li>
                 </ul>
-
             </div>
             <div class="containter w-50">
                 <img src="./Public/Assets/images/google-meet-people.jpg" alt="google-meet-people" class="signin-image">
-
-                
             </div>
         </div>
     </main>
-
     <footer class="container">
         <h6>Learn more about <span class="learn-more text-info">google meet</span>.</h6>
-
     </footer>
-    
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(function () {
+
+            // Function to focus on the input field when the "Join Meeting" button is clicked
+            $(document).on("click", ".join-meeting", function () {
+                // - It focuses on the input field with the class "enter-code".
+                $(".enter-code").focus();
+            })
+
+            // Function to join a meeting when the "Join" button is clicked
+            $(".join-action").on('click', function () {
+                // - It retrieves the value entered in the input field with the class "enter-code".
+                // - It constructs a meeting URL using the retrieved value and the current window location.
+                // - It replaces the current window location with the constructed meeting URL.
+                var join_value = $(".enter-code").val();
+                var meetingUrl = window.location.origin + "?meetingId=" + join_value;
+                window.location.replace(meetingUrl);
+            })
+
+            // Function to create a new meeting when the "New Meeting" button is clicked
+            $(document).on('click', ".new-meeting", function () {
+                // - It generates a random 8-digit value.
+                // - It constructs a meeting URL using the generated value and the current window location.
+                // - It replaces the current window location with the constructed meeting URL.
+                var eight_d_value = Math.floor(Math.random() * 100000000);
+                var meetingUrl = window.location.origin + "?meetingId=" + eight_d_value;
+                window.location.replace(meetingUrl);
+            })
+
+        })
+
+
+
+    </script>
 </body>
 </html>
