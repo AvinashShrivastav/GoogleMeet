@@ -1,31 +1,157 @@
 var AppProcess = (function () {
-
-    var serverProcess ;
+    // Define arrays to store peer connection IDs, connections, remote video streams, remote audio streams, and local video element
     var peers_connection_ids = [];
     var peers_connection = [];
-    var remote_vid_stream  = [];
+    var remote_vid_stream = [];
     var remote_aud_stream = [];
     var local_div;
-    var audio ;
-    var isAudioMute = false;
+
+    // Define a variable to store the server process function
+    var serverProcess;
+
+    // Define variables for audio control
+    var audio;
+    var isAudioMute = true;
+    var rtp_aud_senders = [];
+
+    // Define video states
+    var video_states = {
+        None: 0,
+        Camera: 1,
+        ScreenShare: 2,
+    };
+
+    // Initialize video state to None
+    var video_st = video_states.None;
+
+    // Define variables for video track and senders
+    var videoCamTrack;
+    var rtp_vid_senders = [];
 
 
-    async function _init(SDP_function, my_conn_id) { 
+
+    async function _init(SDP_function, my_conn_id) {
         serverProcess = SDP_function;
         my_conn_id = my_conn_id;
         eventProcess();
-        local_div = document.getElementById("localVideoPlayer");
+        local_div = $("#localVideoPlayer");
+        console.log("Local div", local_div);
 
-     }
+    }
+
+
+
     function eventProcess() {
-        $('#miceMuteUnmute').on('click', async function () {  
-            if(!audio){
+        $("#miceMuteUnmute").on("click", async function () {
+            if (!audio) {
                 await loadAudio();
             }
-            })
-            if(!audio){
-                //left here will continue
+            if (!audio) {
+                alert("Audio permission has not granted");
+                return;
             }
+            if (isAudioMute) {
+                audio.enabled = true;
+                $(this).html(
+                    "<span class='material-icons' style='width:100%;'>mic</span>"
+                );
+                updateMediaSenders(audio, rtp_aud_senders);
+                console.log(rtp_aud_senders);
+            } else {
+                audio.enabled = false;
+                $(this).html(
+                    "<span class='material-icons' style='width:100%;'>mic_off</span>"
+                );
+                removeMediaSenders(rtp_aud_senders);
+                audio.stop();
+                console.log(rtp_aud_senders);
+            }
+            isAudioMute = !isAudioMute;
+        });
+
+
+        $("#videoCamOnOff").on("click", async function () {
+            if (video_st == video_states.Camera) {
+                await videoProcess(video_states.None);
+            } else {
+                await videoProcess(video_states.Camera);
+            }
+        });
+
+        $("#ScreenShareOnOf").on("click", async function () {
+            if (video_st == video_states.ScreenShare) {
+                await videoProcess(video_states.None);
+            } else {
+                await videoProcess(video_states.ScreenShare);
+            }
+        });
+
+
+
+    }
+    function connection_status(connection) {
+        if (
+          connection &&
+          (connection.connectionState == "new" ||
+            connection.connectionState == "connecting" ||
+            connection.connectionState == "connected")
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      async function updateMediaSenders(track, rtp_senders) {
+        for (var con_id in peers_connection_ids) {
+          if (connection_status(peers_connection[con_id])) {
+            if (rtp_senders[con_id] && rtp_senders[con_id].track) {
+              rtp_senders[con_id].replaceTrack(track);
+            } else {
+              rtp_senders[con_id] = peers_connection[con_id].addTrack(track);
+            }
+          }
+        }
+      }
+
+    async function videoProcess(newVideoState) {
+        try {
+            var vstream = null;
+            if (newVideoState == video_states.Camera) {
+              vstream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                  width: 1920,
+                  height: 1080,
+                },
+                audio: false,
+              });
+            } else if (newVideoState == video_states.ScreenShare) {
+              vstream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                  width: 1920,
+                  height: 1080,
+                },
+                audio: false,
+              });
+              vstream.oninactive = (e) => {
+                removeVideoStream(rtp_vid_senders);
+                $("#ScreenShareOnOf").html(
+                  '<span class="material-icons ">present_to_all</span><div >Present Now</div>'
+                );
+              };
+            }
+            if (vstream && vstream.getVideoTracks().length > 0) {
+              videoCamTrack = vstream.getVideoTracks()[0];
+              if (videoCamTrack) {
+                local_div.srcObject = new MediaStream([videoCamTrack]);
+                updateMediaSenders(videoCamTrack, rtp_vid_senders);
+              }
+            }
+          } catch (e) {
+            console.log(e);
+            return;
+          }
+        video_st = newVideoState;
     }
 
     // Define an object named iceConfiguration
@@ -51,7 +177,7 @@ var AppProcess = (function () {
         connection.onnegotiationneeded = async () => {
             console.log("Negotiation needed");
             await setOffer(connId);
-        }   
+        }
         connection.onicecandidate = (event) => {
             if (event.candidate) {
                 console.log("On ice candidate");
@@ -61,105 +187,114 @@ var AppProcess = (function () {
 
         connection.ontrack = (event) => {
             console.log("On track");
-            if(!remote_vid_stream[connId]){
+            if (!remote_vid_stream[connId]) {
                 remote_vid_stream[connId] = new MediaStream();
-                
+
 
             }
-            if(!remote_aud_stream[connId]){
+            if (!remote_aud_stream[connId]) {
                 remote_aud_stream[connId] = new MediaStream();
             }
 
-            if(event.track.kind == "video"){
+            if (event.track.kind == "video") {
                 remote_vid_stream[connId]
-                .getVideoTracks().forEach(t => remote_vid_stream[connId].removeTrack(t));
+                    .getVideoTracks().forEach(t => remote_vid_stream[connId].removeTrack(t));
                 remote_vid_stream[connId].addTrack(event.track);
 
                 var remoteVideoPlayer = document.getElementById("v_" + connId);
                 remoteVideoPlayer.srcObject = null;
                 remoteVideoPlayer.srcObject = remote_vid_stream[connId];
                 remoteVideoPlayer.load();
-            
-        }
-        else if(event.track.kind == "audio"){  
-            remote_aud_stream[connId]
-            .getAudioTracks().forEach(t => remote_aud_stream[connId].removeTrack(t));
-            remote_aud_stream[connId].addTrack(event.track);
-            
-            var remoteAudioPlayer = document.getElementById("a_" + connId);
-            remoteAudioPlayer.srcObject = null;
-            remoteAudioPlayer.srcObject = remote_aud_stream[connId];
-            remoteAudioPlayer.load();   
-        };
-
-
-
-
-        peers_connection_ids[connId] = connId;
-        console.log("Peers connection ids", peers_connection_ids);
-        peers_connection[connId] = connection;
-
-        return connection;
-
-    }
-
-    async function setOffer(connId) {
-        console.log("Set offer", connId)
-        var connection = peers_connection[connId];
-        var offer = await connection.createOffer();
-        await connection.setLocalDescription(offer);
-        serverProcess(JSON.stringify({ offer:  connection.localDescription }), connId);
-
-
-    }
-
-    async function SDPProcess(message, from_connid){
-        message = JSON.parse(message);
-        if(message.answer){
-            console.log("Answer", message.answer);
-            await peers_connection[from_connid].setRemoteDescription(new RTCSessionDescription(message.answer));
-
-        }
-        else if(message.offer){
-            console.log("Offer", message.offer);
-            if(!peers_connection[from_connid]){
-                await setConnection(from_connid);
-            }
-            await peers_connection[from_connid].setRemoteDescription(new RTCSessionDescription(message.offer));
-            var answer = await peers_connection[from_connid].createAnswer();
-            await peers_connection[from_connid].setLocalDescription(answer);
-            serverProcess(JSON.stringify({ answer: answer }), from_connid);
-        }
-
-        else if(message.iceCandidate){
-            console.log("Ice Candidate", message.iceCandidate);
-            if(!peers_connection[from_connid]){
-                await setConnection(from_connid);
-            }
-            try{
-                await peers_connection[from_connid].addIceCandidate(message.iceCandidate);
-            }catch(e){
-                console.error("Error adding received ice candidate", e);
 
             }
+            else if (event.track.kind == "audio") {
+                remote_aud_stream[connId]
+                    .getAudioTracks().forEach(t => remote_aud_stream[connId].removeTrack(t));
+                remote_aud_stream[connId].addTrack(event.track);
+
+                var remoteAudioPlayer = document.getElementById("a_" + connId);
+                remoteAudioPlayer.srcObject = null;
+                remoteAudioPlayer.srcObject = remote_aud_stream[connId];
+                remoteAudioPlayer.load();
+            };
+
+
+
+
+            peers_connection_ids[connId] = connId;
+            console.log("Peers connection ids", peers_connection_ids);
+            peers_connection[connId] = connection;
+            if(video_st == video_states.Camera || video_st == video_states.ScreenShare){
+                if(videoCamTrack){
+            updateMediaSenders(videoCamTrack, rtp_vid_senders)
+        }}
+
+            return connection;
+
         }
-        
+
+        async function setOffer(connId) {
+            console.log("Set offer", connId)
+            var connection = peers_connection[connId];
+            var offer = await connection.createOffer();
+            await connection.setLocalDescription(offer);
+            serverProcess(JSON.stringify({ offer: connection.localDescription }), connId);
+
+
+        }
+
+        async function SDPProcess(message, from_connid) {
+            message = JSON.parse(message);
+            if (message.answer) {
+                console.log("Answer", message.answer);
+                await peers_connection[from_connid].setRemoteDescription(new RTCSessionDescription(message.answer));
+
+            }
+            else if (message.offer) {
+                console.log("Offer", message.offer);
+                if (!peers_connection[from_connid]) {
+                    await setConnection(from_connid);
+                }
+                await peers_connection[from_connid].setRemoteDescription(new RTCSessionDescription(message.offer));
+                var answer = await peers_connection[from_connid].createAnswer();
+                await peers_connection[from_connid].setLocalDescription(answer);
+                serverProcess(JSON.stringify({ answer: answer }), from_connid);
+            }
+
+            else if (message.iceCandidate) {
+                console.log("Ice Candidate", message.iceCandidate);
+                if (!peers_connection[from_connid]) {
+                    await setConnection(from_connid);
+                }
+                try {
+                    await peers_connection[from_connid].addIceCandidate(message.iceCandidate);
+                } catch (e) {
+                    console.error("Error adding received ice candidate", e);
+
+                }
+            }
+
+        }
     }
 
 
     return {
-        setNewConnection: async function (connId) {
-            await setConnection(connId);
+        setNewConnection: async function (connid) {
+            await setConnection(connid);
+        },
+        init: async function (SDP_function, my_connid) {
+            await _init(SDP_function, my_connid);
+        },
+        processClientFunc: async function (data, from_connid) {
+            await SDPProcess(data, from_connid);
         },
 
-        init: async function (SDP_function, my_conn_id) {
-           await  _init(SDP_function, my_conn_id);
-        },
-        processClientFunc: async function (data, from_conn_id) {
-            await SDPProcess(data, from_conn_id);
-        },
     };
+
+
+
 })();
+
 
 var MyApp = (function () {
 
@@ -172,6 +307,10 @@ var MyApp = (function () {
         user_id = uid;
         meeting_id = mid;
 
+        $("#meetingContainer").show();  
+        $('#me h2').text(user_id + ' (Me)');
+        document.title = 'Meeting ID: ' + meeting_id + ' - ' + user_id;
+
 
 
         // Create a new WebSocket connection to the server using the WebSocket constructor and the URL of the signaling server
@@ -181,33 +320,26 @@ var MyApp = (function () {
 
     }
 
-    function event_process_for_signaling_server() {
+    async function event_process_for_signaling_server() {
 
 
         socket = io.connect();
 
-
-        var SDP_function = function (data, connId) {
-            console.log("SDP Function", data, connId);
-            socket.emit('SDPProcess', {
+        var SDP_function = function (data, to_connid) {
+            socket.emit("SDPProcess", {
                 message: data,
-                to_connid: connId
+                to_connid: to_connid,
             });
-        }
-
-
+        };
         socket.on("connect", () => {
-            // Log a message to the clinet console when the client is successfully connected to the signaling server
             if (socket.connected) {
-                console.log("Connected to the server");
                 AppProcess.init(SDP_function, socket.id);
                 if (user_id != "" && meeting_id != "") {
-                    socket.emit('userconnect', {
+                    socket.emit("userconnect", {
                         displayName: user_id,
-                        meetingid: meeting_id
-                    })
+                        meetingid: meeting_id,
+                    });
                 }
-
             }
         });
 
@@ -223,16 +355,16 @@ var MyApp = (function () {
 
         socket.on('inform_me_about_other_user', (other_users) => {
             console.log("Inform me about other user", data);
-            if(other_users){
-                for(var i = 0; i < other_users.length; i++){
+            if (other_users) {
+                for (var i = 0; i < other_users.length; i++) {
                     addUser(other_users[i].user_id, other_users[i].socket_id); //instead of socket_id he used connectionId
                     AppProcess.setNewConnection(other_users[i].socket_id);
                 }
             }
-            
+
         });
 
-        socket.on("SDPProcess", (data) => {     
+        socket.on("SDPProcess", async function (data) {
             console.log("SDP Process", data);
             await AppProcess.processClientFunc(data.message, data.from_connid);
         });
@@ -259,13 +391,8 @@ var MyApp = (function () {
 
 
     return {
-        // The returned object has a method _init which also takes uid and mid as parameters. This method calls the private init function with the provided parameters.
-
-        //Public function to initialize the application
         _init: function (uid, mid) {
-            //private function to initialize the application
             init(uid, mid);
-        }
-    }
-}
-)();
+        },
+    };
+})();
