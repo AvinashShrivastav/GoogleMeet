@@ -54,7 +54,24 @@ io.on("connection", (socket) => {
     });
   });
 
-  
+  socket.on("disconnect", function () {
+    console.log("Disconnected");
+    var disUser = userConnections.find((p) => p.connectionId == socket.id);
+    if (disUser) {
+      var meetingid = disUser.meeting_id;
+      userConnections = userConnections.filter(
+        (p) => p.connectionId != socket.id
+      );
+      var list = userConnections.filter((p) => p.meeting_id == meetingid);
+      list.forEach((v) => {
+        var userNumberAfUserLeave = userConnections.length;
+        socket.to(v.connectionId).emit("inform_other_about_disconnected_user", {
+          connId: socket.id,
+          uNumber: userNumberAfUserLeave,
+        });
+      });
+    }
+  });
 
 
 });

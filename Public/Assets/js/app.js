@@ -428,6 +428,14 @@ var AppProcess = (function () {
           }
         }
       });
+
+      // Handle event when informed about a disconnected user
+      socket.on("inform_other_about_disconnected_user", function (data) {
+        $("#" + data.connId).remove(); // Remove the user's div element
+        $(".participant-count").text(data.uNumber); // Update the participant count
+        $("#participant_" + data.connId + "").remove(); // Remove the participant from the list
+        AppProcess.closeConnectionCall(data.connId); // Close the connection for the disconnected user
+      });
   
   
       socket.on("inform_others_about_me", function (data) {
