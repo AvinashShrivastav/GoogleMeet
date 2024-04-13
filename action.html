@@ -62,42 +62,39 @@
         </div>
     </main>
     <footer class="container"><h6>Learn more about <span class="learn-more text-info">google meet</span> .</h6></footer>
-   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
-        $(function () {
-
-            // Function to focus on the input field when the "Join Meeting" button is clicked
-            $(document).on("click", ".join-meeting", function () {
-                // - It focuses on the input field with the class "enter-code".
+        $(function(){
+            
+                // This code snippet attaches a click event handler to elements with the class "join-meeting".
+                // When a "join-meeting" element is clicked, it sets focus on the element with the class "enter-code".
+            
+            $(document).on("click", ".join-meeting", function(){
                 $(".enter-code").focus();
             })
-
-            // Function to join a meeting when the "Join" button is clicked
-            $(".join-action").on('click', function () {
-                // - It retrieves the value entered in the input field with the class "enter-code".
-                // - It constructs a meeting URL using the retrieved value and the current window location.
-                // - It replaces the current window location with the constructed meeting URL.
-                var join_value = $(".enter-code").val();
-                var meetingUrl = window.location.origin + "?meetingId=" + join_value;
+            
+                // This code snippet handles the click event of an element with the class "join-action".
+                // When the element is clicked, it retrieves the value entered in an input field with the class "enter-code".
+                // It then constructs a meeting URL using the retrieved value and the current window location.
+                // Finally, it replaces the current window location with the constructed meeting URL.
+            
+            $(document).on("click", ".join-action", function(){
+                var join_value = $('.enter-code').val();
+                var meetingUrl = window.location.origin+"?meetingId="+join_value;
                 window.location.replace(meetingUrl);
             })
-
-            // Function to create a new meeting when the "New Meeting" button is clicked
-            $(document).on('click', ".new-meeting", function () {
-                // - It generates a random 8-digit value.
-                // - It constructs a meeting URL using the generated value and the current window location.
-                // - It replaces the current window location with the constructed meeting URL.
-                var eight_d_value = Math.floor(Math.random() * 100000000);
-                var meetingUrl = window.location.origin + "?meetingId=" + eight_d_value;
+            
+                // This code handles the click event for elements with the class "new-meeting".
+                // When clicked, it generates a random eight-digit value and appends it to the current URL as a query parameter.
+                // Finally, it replaces the current URL with the updated URL containing the generated meeting ID.
+            
+            $(document).on("click", ".new-meeting", function(){
+                var eight_d_value = Math.floor(Math.random()*100000000);
+                var meetingUrl = window.location.origin+"?meetingId="+eight_d_value;
                 window.location.replace(meetingUrl);
             })
 
         })
-
-
-
     </script>
 </body>
 </html>
