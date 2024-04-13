@@ -148,6 +148,9 @@ var AppProcess = (function () {
         $("#videoCamOnOff").html(
           "<span class='material-icons' style='width:100%;'>videocam_off</span>"
         );
+        
+        
+        // Update the HTML content of the element with id "ScreenShareOnOf"
         $("#ScreenShareOnOf").html(
           '<span class="material-icons">present_to_all</span><div>Present Now</div>'
         );
@@ -192,6 +195,7 @@ var AppProcess = (function () {
             audio: false,
           });
 
+        // Add event listener for when the video stream becomes inactive
         vstream.oninactive = (e) => {
           removeVideoStream(rtp_vid_senders);
           $("#ScreenShareOnOf").html(
@@ -216,6 +220,7 @@ var AppProcess = (function () {
         $("#videoCamOnOff").html(
           '<span class="material-icons" style="width: 100%;">videocam</span>'
         );
+        // Update the HTML content of the element with id "ScreenShareOnOf"
         $("#ScreenShareOnOf").html(
           '<span class="material-icons ">present_to_all</span><div >Present Now</div>'
         );
