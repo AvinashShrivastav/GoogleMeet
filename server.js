@@ -75,15 +75,17 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", function () {
     console.log("Disconnected");
-    var mUser = userConnections.find((p) => p.connectionId == socket.id);
-    if(mUser){
-      var meetingid = mUser.meeting_id;
-      var from = mUser.user_id;
-      var list = userConnections.filter((p) => p.meeting_id != meetingid);
+    var disUser = userConnections.find((p) => p.connectionId == socket.id);
+    if(disUser){
+      var meetingid = disUser.meeting_id;
+      userConnections = userConnections.filter((p) => p.connectionId != socket.id);
+      var list = userConnections.filter((p) => p.meeting_id == meetingid);
       list.forEach((v) => {
-        socket.to(v.connectionId).emit("showChatMessage", {
-          from: from,
-          message: msg
+        var userNumberAfterUserLeave = userConnections.length;
+        socket.to(v.connectionId).emit("inform_other_about_disconnected_user", {
+          connId: socket.id,
+          user_id: disUser.user_id,
+          uNumber: userNumberAfterUserLeave,
         });
       });
     }
