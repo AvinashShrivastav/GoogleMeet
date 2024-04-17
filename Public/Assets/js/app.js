@@ -538,6 +538,29 @@ var MyApp = (function () {
     $(".in-call-wrap-up").hide(300);
     $(".chat-show-wrap").show(300);
   });
+
+  $(document).on("click",".end-call-wrap",function(){
+   $(".top-box-show").css({
+    display: "block",
+   }).html(
+    '<div class="top-box align-vertical-middle profile-dialogue-show"> <h4 class="mt-3" style="text-align:center;color:white;">Leave Meeting</h4> <hr> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100"> <a href="/action.html"><button class="call-leave-action btn btn-danger mr-5">Leave</button></a> <button class="call-cancel-action btn btn-secondary">Cancel</button> </div> </div>'
+   )
+  });
+
+  $(document).mouseup(function(e){
+   var container = new Array();
+    container.push($('.top-box-show'));
+    $.each(container, function(key, value) {
+      if (!$(value).is(e.target) && $(value).has(e.target).length === 0) {
+        $(value).empty();
+      }
+    });
+  });
+
+  $(document).on("click",".call-cancel-action",function(){
+    $(".top-box-show").html("");
+  });
+
   return {
     _init: function (uid, mid) {
       init(uid, mid);
