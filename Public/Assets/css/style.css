@@ -118,6 +118,71 @@ height: 600px;
     height: 100%;
     /* background-image: url(../images/bg.png) !important; */
 }
+
+.msgbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15%;
+
+}
+
+.msginput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 35px;
+    background-color: #F6F6F6;
+    border-radius: 50px;
+}
+
+.attachment {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.attachment img {
+    width: 20px;
+    height: 20px;
+}
+
+.msginput input {
+    width: 60%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background-color: #F6F6F6;
+    font-size: 12px;
+}
+
+.msgsend {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+}
+
+.imgsendbg {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0060FF;
+    border-radius: 50px;
+}
+
+.msgsend img {
+    width: 75%;
+    height: 75%;
+}
 video{
     border: 1px solid gray;
     width: 300px;

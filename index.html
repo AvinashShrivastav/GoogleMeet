@@ -163,27 +163,25 @@
 
 
                         <div class="chat-show-wrap text-secondary  flex-column justify-content-between h-100"
-                            style="font-size: 14px; display: flex;">
+                            style="display: flex;">
 
                             <div class="chat-message-show" id="messages"></div>
 
-                            <div class="chat-message-sent d-flex justify-content-between align-items-center"
-                                style="margin-bottom:35px">
-
-                                <div class="chat-message-sent-input" style="width: 85%;">
-
-                                    <input type="text" name="" class="chat-message-sent-input-field w-100" id="msgbox"
-                                        placeholder="Send a message to everyone"
-                                        style="border-bottom: 1px solid teal; border: none;">
-
+                            <div class="msgbox chat-message-sent">
+                                <div class="msginput chat-message-sent">
+                                    <div class="attachment">
+                                        <img src="Public\Assets\images\Group 237548.png" alt="">
+                                    </div>
+                                    <input type="text" class="chat-message-sent-input-field" id="msgbox" placeholder="Type Something...">
+                                    <div class="msgsend chat-message-sent-action " id="btnsend">
+                                        <div class="imgsendbg ">
+                                            <img src="Public\Assets\images\send-2.png" alt="">
+                                        </div>
+            
+                                    </div>
                                 </div>
-
-                                <div class="chat-message-sent-action display-center" id="btnsend"
-                                    style="color: teal; cursor:pointer;">
-                                    <span class="material-icons">send</span>
-                                </div>
-
                             </div>
+            
 
                         </div>
 
@@ -207,6 +205,9 @@
                 <div class="top-left-time-wrap"></div>
             </div>
         </div>
+
+
+
         <div class="g-bottom bg-light m-0 d-flex justify-content-between align-items-center">
             <div class="bottom-left d-flex" style="height:10vh">
                 <div class="g-details border border-success mb-2" style="display: none;min-height: 19.5vh;">
@@ -231,7 +232,7 @@
                                         class="link-conf font-weight-bold p-1">Link Copied</span></span>
                             </div>
                         </div>
-                        <div class="g-details-heading-show-attachment" style="display: none;position: relative;">
+                        <div class="g-details-heading-show-attachment" style="position: relative;">
                             <div class="show-attach-file"></div>
                             <div class="upload-attach-file">
                                 <form enctype="multipart/form-data" ref="uploadForm" class="display-center"
