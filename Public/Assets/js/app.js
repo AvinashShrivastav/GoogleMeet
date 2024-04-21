@@ -471,8 +471,8 @@ var MyApp = (function () {
       });
       var div = $("<div>").html("<span class='font-weight-bold mr-3' style = 'color:black'>" + data.from + "</span>" + lTime + "<br>" + data.message);
       $("#messages").append(div);
-  
-  
+
+
     });
 
   }
@@ -492,9 +492,12 @@ var MyApp = (function () {
       $("#msgbox").val("");
 
     });
+
+    var url = window.location.href;
+    $(".meeting_url").text(url);
   }
 
-  
+
 
   function addUser(other_user_id, connId, userNum) {
     var newDivId = $("#otherTemplate").clone();
@@ -505,61 +508,81 @@ var MyApp = (function () {
     newDivId.show();
     $("#divUsers").append(newDivId);
 
-    $(".in-call-wrap-up").append('<div class="in-call-wrap d-flex justify-content-between align-items-center mb-3" id = "participant_'+connId+'"><div class="participant-img-name-wrap display-center cursor-pointer"><div class="participant-img"><img src="public/Assets/images/other.jpg" alt="" class="border border-secondary"style="height: 40px;width: 40px;border-radius: 50%;"></div><div class="participant-name ml-2">'+other_user_id+'</div></div><div class="participant-action-wrap display-center"><div class="participant-action-dot display-center mr-2 cursor-pointer"><span class="material-icons">more_vert</span></div><div class="participant-action-pin display-center mr-2 cursor-pointer"><span class="material-icons">push_pin</span></div></div></div>');
+    $(".in-call-wrap-up").append('<div class="in-call-wrap d-flex justify-content-between align-items-center mb-3" id = "participant_' + connId + '"><div class="participant-img-name-wrap display-center cursor-pointer"><div class="participant-img"><img src="public/Assets/images/other.jpg" alt="" class="border border-secondary"style="height: 40px;width: 40px;border-radius: 50%;"></div><div class="participant-name ml-2">' + other_user_id + '</div></div><div class="participant-action-wrap display-center"><div class="participant-action-dot display-center mr-2 cursor-pointer"><span class="material-icons">more_vert</span></div><div class="participant-action-pin display-center mr-2 cursor-pointer"><span class="material-icons">push_pin</span></div></div></div>');
 
     $(".participant-count").text(userNum);
 
 
   }
-  $(document).on("click", ".people-heading", function (){
+  $(document).on("click", ".people-heading", function () {
     $(".chat-show-wrap").hide(300);
     $(".in-call-wrap-up").show(300);
     $(this).addClass("active");
     $(".chat-heading").removeClass("active");
   });
-  $(document).on("click", ".chat-heading", function (){
+  $(document).on("click", ".chat-heading", function () {
     $(".in-call-wrap-up").hide(300);
     $(".chat-show-wrap").show(300);
     $(this).addClass("active");
     $(".people-heading").removeClass("active");
-    
+
   });
 
-  $(document).on("click",".meeting-heading-cross",function(){
+  $(document).on("click", ".meeting-heading-cross", function () {
     $(".g-right-details-wrap").hide(300);
   });
-  $(document).on("click",".top-left-participant-wrap",function(){
+  $(document).on("click", ".top-left-participant-wrap", function () {
     $(".g-right-details-wrap").show(300);
     $(".chat-show-wrap").hide(300);
     $(".in-call-wrap-up").show(300);
   });
-  $(document).on("click",".top-left-chat-wrap",function(){
+  $(document).on("click", ".top-left-chat-wrap", function () {
     $(".g-right-details-wrap").show(300);
     $(".in-call-wrap-up").hide(300);
     $(".chat-show-wrap").show(300);
   });
 
-  $(document).on("click",".end-call-wrap",function(){
-   $(".top-box-show").css({
-    display: "block",
-   }).html(
-    '<div class="top-box align-vertical-middle profile-dialogue-show"> <h4 class="mt-3" style="text-align:center;color:white;">Leave Meeting</h4> <hr> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100"> <a href="/action.html"><button class="call-leave-action btn btn-danger mr-5">Leave</button></a> <button class="call-cancel-action btn btn-secondary">Cancel</button> </div> </div>'
-   )
+  $(document).on("click", ".end-call-wrap", function () {
+    $(".top-box-show").css({
+      display: "block",
+    }).html(
+      '<div class="top-box align-vertical-middle profile-dialogue-show"> <h4 class="mt-3" style="text-align:center;color:white;">Leave Meeting</h4> <hr> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100"> <a href="/action.html"><button class="call-leave-action btn btn-danger mr-5">Leave</button></a> <button class="call-cancel-action btn btn-secondary">Cancel</button> </div> </div>'
+    )
   });
 
-  $(document).mouseup(function(e){
-   var container = new Array();
+  $(document).mouseup(function (e) {
+    var container = new Array();
     container.push($('.top-box-show'));
-    $.each(container, function(key, value) {
+    $.each(container, function (key, value) {
       if (!$(value).is(e.target) && $(value).has(e.target).length === 0) {
         $(value).empty();
       }
     });
   });
 
-  $(document).on("click",".call-cancel-action",function(){
+  $(document).on("click", ".call-cancel-action", function () {
     $(".top-box-show").html("");
   });
+
+  $(document).on("click", ".meeting-details-button", function () {
+    console.log("clicked");
+    $(".g-details-heading-show-attachment").show(300);
+  });
+
+  $(document).on('click', '.copy_info', function (){
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($('.meeting_url').text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+    $(".link_conf").show();
+    setTimeout(function(){
+      $(".link_conf").hide();
+    }, 3000);
+  
+  })
+
+
 
   return {
     _init: function (uid, mid) {
