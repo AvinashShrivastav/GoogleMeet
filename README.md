@@ -35,8 +35,7 @@ This project is a Video Calling Web Application that supports peer-to-peer video
 1. **Clone the repository:**
 
    ```bash
-   [git clone https://github.com/yourusername/videocalling-app.git
-   cd videocalling-app](https://github.com/AvinashShrivastav/GoogleMeet.git)
+   git clone https://github.com/AvinashShrivastav/GoogleMeet.git
    ```
 
 2. **Install dependencies:**
